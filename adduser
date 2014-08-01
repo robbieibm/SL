@@ -1,0 +1,154 @@
+# Create_User.py
+import string
+from time import time
+from itertools import chain
+from random import seed, choice, sample
+
+
+username = ""
+apiKey = ""
+
+client = SoftLayer.Client(
+    username= username,
+    api_key = apiKey,
+    )
+
+def mkpasswd(length=10, digits=2, upper=1, lower=2, special=1):
+    """Create a random password
+
+    Create a random password with the specified length and no. of
+    digit, upper and lower case letters.
+
+    :param length: Maximum no. of characters in the password
+    :type length: int
+
+    :param digits: Minimum no. of digits in the password
+    :type digits: int
+
+    :param upper: Minimum no. of upper case letters in the password
+    :type upper: int
+
+    :param lower: Minimum no. of lower case letters in the password
+    :type lower: int
+
+    :param special: Minimum no. of lower case letters in the password
+    :type special: int
+
+    :returns: A random password with the above constaints
+    :rtype: str
+    """
+
+    seed(time())
+
+    lowercase = string.ascii_lowercase.translate(None, "o")
+    uppercase = string.ascii_uppercase.translate(None, "O")
+    letters = "{0:s}{1:s}".format(lowercase, uppercase)
+    specialchars = "_-|@.,?/!~#$%^&*(){}[]\+="
+
+    password = list(
+        chain(
+            (choice(uppercase) for _ in range(upper)),
+            (choice(specialchars) for _ in range(special)),
+            (choice(lowercase) for _ in range(lower)),
+            (choice(string.digits) for _ in range(digits)),
+            (choice(letters) for _ in range((length - special - digits - upper - lower)))
+        )
+    )
+
+    return "".join(sample(password, len(password)))
+
+
+NewUserName = raw_input("Enter new user name: ")
+FirstName = raw_input("Enter user First Name: ")
+LastName = raw_input("Enter user Last Name: ")
+email = raw_input("Enter user email: ")
+
+password = mkpasswd()
+
+vpn_password = password
+
+print
+print 'Creating new user: userid={} under parent {}...'.format(NewUserName,ParentUserID, password)
+
+template_user = {
+    'parentId': ParentUserID,
+    'username': NewUserName,
+    'firstName': FirstName,
+    'lastName': LastName,
+    'email': email,
+    'companyName': 'DEMO ACCOUNT',
+    'address1': 'Orchard Road',
+    'city': 'SG',
+    'state': 'SG',
+    'country': 'SG',
+    'permissionSystemVersion': 1,
+    'postalCode': '11000',
+    'userStatusId': 100,
+    'timezoneId': 65,
+    'secondaryPasswordTimeoutDays': 90,
+    'secondaryLoginRequiredFlag': '',
+    }
+
+# SET PERMISSIONS FOR NEW CHILD ACCOUNT
+bulkpermission = [{'keyName': 'SERVER_ADD', 'name': 'add server', 'key': 'XX_1'},
+                  {'keyName': 'SERVER_UPGRADE', 'name': 'Upgrade Server', 'key': 'A_5'},
+                  {'keyName': 'SERVER_CANCEL', 'name': 'Cancel Server', 'key': 'A_6'},
+                  {'keyName': 'SERVICE_ADD', 'name': 'Add Services', 'key': 'A_7'},
+                  {'keyName': 'SERVICE_UPGRADE', 'name': 'Upgrade Services', 'key': 'A_8'},
+                  {'keyName': 'SERVICE_CANCEL', 'name': 'Cancel Services', 'key': 'A_9'},
+                  {'keyName': 'BANDWIDTH_MANAGE', 'name': 'bandwidth', 'key': 'B_1'},
+                  {'keyName': 'DNS_MANAGE', 'name': 'DNS', 'key': 'DNS_1'},
+                  {'keyName': 'HARDWARE_VIEW', 'name': 'View Hardware', 'key': 'H_1'},
+                  {'keyName': 'REMOTE_MANAGEMENT', 'name': 'IPMI', 'key': 'H_2'},
+                  {'keyName': 'MONITORING_MANAGE', 'name': 'Monitoring', 'key': 'H_3'},
+                  {'keyName': 'SERVER_RELOAD', 'name': 'OS Reloads', 'key': 'H_4'},
+                  {'keyName': 'LICENSE_VIEW', 'name': 'View licenses', 'key': 'H_5'},
+                  {'keyName': 'IP_ADD', 'name': 'Add Ips', 'key': 'H_6'},
+                  {'keyName': 'LOCKBOX_MANAGE', 'name': 'Manage lockbox', 'key': 'NAS_1'},
+                  {'keyName': 'NAS_MANAGE', 'name': 'Manage NAS', 'key': 'NAS_2'},
+                  {'keyName': 'PORT_CONTROL', 'name': 'Manage Port Control', 'key': 'PO_1'},
+                  {'keyName': 'TICKET_VIEW', 'name': 'View Tickets', 'key': 'T_1'},
+                  {'keyName': 'TICKET_SEARCH', 'name': 'Search Tickets', 'key': 'T_2'},
+                  {'keyName': 'LOADBALANCER_MANAGE', 'name': 'Manage Load Balancers', 'key': 'LBS_1'},
+                  {'keyName': 'FIREWALL_MANAGE', 'name': 'Hardware Firewall', 'key': 'SE_2'},
+                  {'keyName': 'ANTI_MALWARE_MANAGE', 'name': 'Antivirus / Spyware', 'key': 'SE_4'},
+                  {'keyName': 'NETWORK_IDS_MANAGE', 'name': 'Network IDS', 'key': 'SE_5'},
+                  {'keyName': 'HOST_ID_MANAGE', 'name': 'Host IDS', 'key': 'SE_6'},
+                  {'keyName': 'VULN_SCAN_MANAGE', 'name': 'Vulnerability Scanning ', 'key': 'SE_7'},
+                  {'keyName': 'NTF_SUBSCRIBER_MANAGE', 'name': 'Manage StorageLayer Notification Subscribers', 'key': 'NTF_1'},
+                  {'keyName': 'NETWORK_VLAN_SPANNING', 'name': 'Network VLAN Spanning', 'key': 'NET_2'},
+                  {'keyName': 'NETWORK_ROUTE_MANAGE', 'name': 'Manage network routes', 'key': 'NET_1'},
+                  {'keyName': 'VIRTUAL_GUEST_VIEW', 'name': 'View CloudLayer Computing Instances', 'key': 'VG_1'},
+                  {'keyName': 'RESET_PORTAL_PASSWORD', 'name': 'Reset customer portal password', 'key': 'A_12'},
+                  {'keyName': 'INSTANCE_UPGRADE', 'name': 'Cloude Instance upgrade', 'key': 'A_11'},
+                  {'keyName': 'HOSTNAME_EDIT', 'name': 'Hostname', 'key': 'H_7'},
+                  {'keyName': 'TICKET_VIEW_BY_HARDWARE', 'name': 'View Tickets by Hardware Access', 'key': 'T_4'},
+                  {'keyName': 'TICKET_VIEW_BY_VIRTUAL_GUEST', 'name': 'View Tickets by Computing Instance Access', 'key': 'T_5'},
+                  {'keyName': 'NETWORK_TUNNEL_MANAGE', 'name': 'IPSEC Network Tunnel', 'key': 'NET_3'},
+                  {'keyName': 'QUEUE_MANAGE', 'name': 'Manage Queue Service', 'key': 'SO_6'},
+                  {'keyName': 'VPN_MANAGE', 'name': 'Manage VPN', 'key': 'VPN_1'},
+                  {'keyName': 'VIEW_QUANTASTOR', 'name': 'View QuantaStor', 'key': 'SO_7'},
+                  {'keyName': 'CUSTOMER_SSH_KEY_MANAGEMENT', 'name': 'Manage SSH Keys', 'key': 'SE_10'},
+                  {'keyName': 'TICKET_VIEW_ALL', 'name': 'View All Tickets', 'key': 'T_6'},
+                  {'keyName': 'TICKET_ADD', 'name': 'Add Tickets', 'key': 'T_7'},
+                  {'keyName': 'TICKET_EDIT', 'name': 'Edit Tickets', 'key': 'T_8'},
+                  
+
+# Create New Child User ID
+new_user = client['User_Customer'].createObject(template_user, password, vpn_password)
+
+#Get Userid of new user
+userid = new_user['id']
+
+# Give SSL VPN Access to new USERID
+template_user = {
+    'sslVpnAllowedFlag': True,
+    }
+
+result = client['User_Customer'].editObject(template_user,id=userid)
+
+# SET BULK PERMISSIONS OF NEW USER
+result = client['User_Customer'].addBulkPortalPermission(bulkpermission, id = userid)
+
+print 'We have created new user {}, password={}.'.format(NewUserName,password)
+
